@@ -1,10 +1,15 @@
 package main
 
 import (
+	"database/sql"
+	"github.com/per1Peteia/gator/internal/config"
+	"github.com/per1Peteia/gator/internal/database"
 	"log"
 	"os"
-	"github.com/per1Peteia/gator/internal/config"
 )
+
+// the underscore tells go that this is imported for side effects not usage
+import _ "github.com/lib/pq"
 
 func main() {
 	config, err := cfg.Read()
@@ -12,8 +17,12 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
+	db, err := sql.Open("postgres", "postgres://peripeteia:@localhost:5432/gator?sslmode=disable")
+	dbQueries := database.New(db)
+
 	appState := state{
-		c: &config,
+		c:  &config,
+		db: dbQueries,
 	}
 
 	commands := commands{
@@ -21,6 +30,7 @@ func main() {
 	}
 
 	commands.register("login", handlerLogin)
+	commands.register("register", handlerRegister)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
@@ -32,5 +42,5 @@ func main() {
 	if err := commands.run(&appState, command); err != nil {
 		log.Fatal(err)
 	}
-	
+
 }
