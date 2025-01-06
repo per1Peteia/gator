@@ -10,11 +10,34 @@ import (
 	"time"
 )
 
+// this struct represents application state (config and database)
 type state struct {
 	c  *cfg.Config
 	db *database.Queries
 }
 
+func handlerListfeeds(s *state, cmd command) error {
+	feeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("couldn't get feeds: %w", err)
+	}
+
+	if len(feeds) == 0 {
+		return fmt.Errorf("you need to add feeds first.")
+	}
+
+	for _, feed := range feeds {
+		fmt.Printf(" * Name:					%s\n", feed.Name)
+		fmt.Printf(" * URL:						%s\n", feed.Url)
+		fmt.Printf(" * User:					%s\n", feed.Feedusername)
+		fmt.Println()
+		fmt.Println("=====================================")
+	}
+
+	return nil
+}
+
+// this function takes 2 arguments (name, url), adds a feed to the db, and connects it to the current user
 func handlerAddfeed(s *state, cmd command) error {
 	if len(cmd.args) != 2 {
 		return fmt.Errorf("Usage: %s <name> <feed_url>\n", cmd.name)
@@ -42,6 +65,7 @@ func handlerAddfeed(s *state, cmd command) error {
 	return nil
 }
 
+// helper function to print feeds
 func printFeed(feed database.Feed) {
 	fmt.Printf("* ID:            %s\n", feed.ID)
 	fmt.Printf("* Created:       %v\n", feed.CreatedAt)
@@ -51,6 +75,7 @@ func printFeed(feed database.Feed) {
 	fmt.Printf("* UserID:        %s\n", feed.UserID)
 }
 
+// this function takes no arguments and will aggregate feeds
 func handlerAgg(s *state, cmd command) error {
 	url := "https://www.wagslane.dev/index.xml"
 	rssFeed, err := api.FetchFeed(context.Background(), url)
@@ -62,6 +87,7 @@ func handlerAgg(s *state, cmd command) error {
 	return nil
 }
 
+// this function takes no arguments and prints all currently registered users to the console
 func handlerList(s *state, cmd command) error {
 	// loop over GetUsers slice and print '<user> (current)' if user is set to current else print user w/o (current)
 	items, err := s.db.GetUsers(context.Background())
@@ -82,6 +108,7 @@ func handlerList(s *state, cmd command) error {
 	return nil
 }
 
+// this function takes no arguments and resets the users table to an empty valid table
 func handlerReset(s *state, cmd command) error {
 	if err := s.db.DeleteUsers(context.Background()); err != nil {
 		return fmt.Errorf("could not reset database: %w", err)
@@ -91,6 +118,7 @@ func handlerReset(s *state, cmd command) error {
 	return nil
 }
 
+// this function takes 1 argument (name) and logs in a registered user to be the current user
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("usage: %s <name>", cmd.name)
@@ -108,6 +136,7 @@ func handlerLogin(s *state, cmd command) error {
 	return nil
 }
 
+// this function takes 1 argument (name) and registers a user to be included in the users table
 func handlerRegister(s *state, cmd command) error {
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("usage: %s <name>", cmd.name)
@@ -134,6 +163,7 @@ func handlerRegister(s *state, cmd command) error {
 	return nil
 }
 
+// helper function to print users
 func printUser(user database.User) {
 	fmt.Printf(" * ID:			%v\n", user.ID)
 	fmt.Printf(" * Name:		%v\n", user.Name)

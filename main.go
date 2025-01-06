@@ -35,6 +35,7 @@ func main() {
 	commands.register("users", handlerList)
 	commands.register("agg", handlerAgg)
 	commands.register("addfeed", handlerAddfeed)
+	commands.register("feeds", handlerListfeeds)
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: cli <command> [args...]")
@@ -46,5 +47,4 @@ func main() {
 	if err := commands.run(&appState, command); err != nil {
 		log.Fatal(err)
 	}
-
 }
