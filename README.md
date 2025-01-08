@@ -1,6 +1,5 @@
 # gator
-a rss blog aggregator
-this repo is a project i built for the boot.dev course
+a rss blog aggregator - this repo is a project i built for the boot.dev course
 
 ## requirements
 
@@ -21,6 +20,7 @@ this repo is a project i built for the boot.dev course
 
 ## installation
 
+`go install https://github.com/per1Peteia/gator`
 
 ## setup
 
