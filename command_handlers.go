@@ -3,12 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"strconv"
-	"time"
-
 	"github.com/google/uuid"
 	cfg "github.com/per1Peteia/gator/internal/config"
 	"github.com/per1Peteia/gator/internal/database"
+	"strconv"
+	"time"
 )
 
 // this struct represents application state (config and database)
@@ -17,6 +16,7 @@ type state struct {
 	db *database.Queries
 }
 
+// takes 1 optional argument (limit posts to browse) and prints post data to the console
 func handlerBrowse(s *state, cmd command, user database.User) error {
 	limit := 2
 	if len(cmd.args) == 1 {
