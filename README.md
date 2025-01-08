@@ -20,7 +20,7 @@ a rss blog aggregator - this repo is a project i built for the boot.dev course
 
 ## installation
 
-`go install https://github.com/per1Peteia/gator`
+```go install https://github.com/per1Peteia/gator```
 
 ## setup
 
