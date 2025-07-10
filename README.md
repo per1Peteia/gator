@@ -3,7 +3,6 @@ a rss blog aggregator - this repo is a project i built for the boot.dev course
 
 ## requirements
 
-* this was built on macOS
 * go v1.23.4 
 * postgresql v12+
 * pq driver: ensure the github.com/lib/pq package is included in go.mod.
